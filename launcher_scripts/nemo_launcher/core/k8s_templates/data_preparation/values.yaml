@@ -11,6 +11,9 @@ dataPrepConfig:
   # Specify the amount of shared memory to attach to the Pods #
   shmSize: 512Gi
 
+  # Insert the pvc name for the NFS if using NFS for model storage #
+  NFSPersistentVolumeClaimName: <Insert NFS pvc name>
+
   # Insert the address for the NFS server if using NFS for model storage #
   NFSServer: <Insert NFS server address>
 
