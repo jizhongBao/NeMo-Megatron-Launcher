@@ -1,0 +1,21 @@
+image:
+  name: paas-cn-beijing.cr.volces.com/nemo/nemo-controller
+  tag: v1.0
+  imagePullSecrets: nvcr.io
+  pullPolicy: Always
+
+
+dataConfig:
+  ContainerImage: paas-cn-beijing.cr.volces.com/nemo/nemofw-training:23.08.02
+
+  ShmSize: 512Gi
+
+  # Insert the pvc name for the NFS if using NFS for model storage #
+  NFSPersistentVolumeClaimName: <Insert NFS pvc name>
+  # Insert the address for the NFS server if using NFS for model storage #
+  NFSServer: <Insert NFS server address>
+  # Insert the path to save data on the NFS server #
+  NFSPath: /data
+
+  IBResourceName: "nvidia.com/hostdev"
+  IBResourceCount: 0

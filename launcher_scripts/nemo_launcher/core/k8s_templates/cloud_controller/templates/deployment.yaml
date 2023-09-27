@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "common.names.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+      app.kubernetes.io/managed-by: {{ .Release.Service }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+        app.kubernetes.io/managed-by: {{ .Release.Service }}
+    spec:
+      serviceAccountName: {{ include "common.names.fullname" . }}
+      containers:
+        - name: cloud-init
+          image: "{{ .Values.image.name}}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          workingDir: {{ .Values.dataConfig.NFSPath }}
+          command:
+          - /bin/sh
+          - -c
+          args:
+          - |
+            dir="{{ .Values.dataConfig.NFSPath }}/NeMo-Megatron-Launcher"
+            if [ ! -d "$dir" ]; then
+              # repository doesn't exist.
+              echo "repository not found, start to clone"
+              git clone https://github.com/jizhongBao/NeMo-Megatron-Launcher.git
+              echo "clone repository succeed, copy config to repository"
+              cp /nemo-launch-config/config.yaml ./NeMo-Megatron-Launcher/launcher_scripts/conf/config.yaml
+              cp /nemo-launch-config/k8s.yaml ./NeMo-Megatron-Launcher/launcher_scripts/conf/cluster/k8s.yaml
+              echo "copy config succeed, next install requirements"
+            fi
+            cd NeMo-Megatron-Launcher
+            pip install -r requirements.txt
+            echo "All tasks have been completed. Enjoy it"
+            tail -f /dev/null
+          volumeMounts:
+          - name: workspace
+            mountPath: {{ .Values.dataConfig.NFSPath }}
+          - name: config
+            mountPath: /nemo-launch-config
+      volumes:
+      - name: workspace
+        persistentVolumeClaim:
+          claimName: {{ .Values.dataConfig.NFSPersistentVolumeClaimName }}
+      - name: config
+        configMap:
+          name: {{ include "common.names.fullname" . }}-config
+
