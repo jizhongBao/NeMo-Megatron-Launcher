@@ -633,6 +633,7 @@ class NeMoStage(NemoMegatronStage):
         values_template.image.numGPUs = self.stage_cfg.trainer.devices
         values_template.image.nodes = self.stage_cfg.trainer.num_nodes
         values_template.trainingConfig.shmSize = cluster_parameters['shm_size']
+        values_template.trainingConfig.NFSPersistentVolumeClaimName = cluster_parameters['nfs_persistent_volume_claim_name']
         values_template.trainingConfig.NFSServer = cluster_parameters['nfs_server']
         values_template.trainingConfig.NFSPath = cluster_parameters['nfs_path']
         values_template.trainingConfig.ibResourceName = cluster_parameters['ib_resource_name']
@@ -984,6 +985,7 @@ class Conversion(NemoMegatronStage):
         values_template.image.pullSecret = cluster_parameters['pull_secret']
         values_template.image.gpuNum = num_gpus
         values_template.trainingConfig.shmSize = cluster_parameters['shm_size']
+        values_template.trainingConfig.NFSPersistentVolumeClaimName = cluster_parameters['nfs_persistent_volume_claim_name']
         values_template.trainingConfig.NFSServer = cluster_parameters['nfs_server']
         values_template.trainingConfig.NFSPath = cluster_parameters['nfs_path']
         values_template.trainingConfig.vocabPath = self.cfg.conversion.model.vocab_file
@@ -1208,6 +1210,7 @@ class EvalHarnessEvaluation(NemoMegatronStage):
         values_template.image.pullSecret = cluster_parameters['pull_secret']
         values_template.image.gpuNum = num_gpus
         values_template.trainingConfig.shmSize = cluster_parameters['shm_size']
+        values_template.trainingConfig.NFSPersistentVolumeClaimName = cluster_parameters['nfs_persistent_volume_claim_name']
         values_template.trainingConfig.NFSServer = cluster_parameters['nfs_server']
         values_template.trainingConfig.NFSPath = cluster_parameters['nfs_path']
         values_template.trainingConfig.vocabPath = self.cfg.evaluation.model.vocab_file
